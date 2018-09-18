@@ -37,18 +37,23 @@
             issue = "0")]
 
 use fmt;
+use mem;
 
 #[cold] #[inline(never)] // this is the slow path, always
 #[lang = "panic"]
 pub fn panic(expr_file_line_col: &(&'static str, &'static str, u32, u32)) -> ! {
-    loop {}
+    panic_fmt(unsafe { mem::uninitialized() }, &(
+            expr_file_line_col.1,
+            expr_file_line_col.2,
+            expr_file_line_col.3,
+    ))
 }
 
 #[cold] #[inline(never)]
 #[lang = "panic_bounds_check"]
 fn panic_bounds_check(file_line_col: &(&'static str, u32, u32),
                      index: usize, len: usize) -> ! {
-    loop {}
+    panic_fmt(unsafe { mem::uninitialized() }, file_line_col)
 }
 
 #[cold] #[inline(never)]
